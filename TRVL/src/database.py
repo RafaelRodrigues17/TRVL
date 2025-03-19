@@ -14,6 +14,9 @@ def criar_tabelas():
                    (id integer primary key,id_usuario text,destino text,data_prevista text,
                    status text,imagem text,gastos real,dinheiro_guardado real)''')
     
+    cursor.execute('''create table if not exists usuarios_projetos
+                   (id integer primary key, email_usuario text, id_projeto integer)''')
+    
     conexao.commit()
 
 def criar_usuario(email, nome, senha):
@@ -127,16 +130,32 @@ def mudar_senha (senha, nova_senha):
     except sqlite3.IntegrityError:
         return False
     finally:
-        conexao.close()    
+        conexao.close()
+            
+def adicionar_usuario_viagem(email, id_projeto):
+    conexao = conectar_banco()
+    cursor = conexao.cursor()
+    
+    try:
+        cursor.execute('''INSERT INTO usuarios_projetos (email_usuario, id_projeto)
+                       values (?, ?)''', (email, id_projeto))
+        conexao.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conexao.close()
+        
 
 if __name__ == '__main__': 
-    conexao = conectar_banco()
-    criar_tabelas()
-    id_viagens = mostrar_id_viagens("rafael@gmail.com")
-    print(id_viagens)
+    # conexao = conectar_banco()
+    # criar_tabelas()
+    # id_viagens = mostrar_id_viagens("rafael@gmail.com")
+    # print(id_viagens)
     
-    mudar_nome_usuario('rafael@gmail.com', novo_nome = 'rafael' )
-    mudar_senha('rafael@gmail.com', nova_senha = 'rafael123' )
+    # mudar_nome_usuario('rafael@gmail.com', novo_nome = 'rafael' )
+    # mudar_senha('rafael@gmail.com', nova_senha = 'rafael123' )
+    criar_tabelas()
 
 
     
